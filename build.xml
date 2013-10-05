@@ -3,11 +3,13 @@
               Any modifications will be overwritten.
               To include a user specific buildfile here, simply create one in the same
               directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="MapReduceSampleCdh4">
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="MapReduceSampleCdh4">
     <property environment="env"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.7"/>
     <property name="source" value="1.7"/>
+    <property name="jar.name" value="work/MapReduceSampleCdh4.jar"/>
     <path id="MapReduceSampleCdh4.classpath">
         <pathelement location="bin"/>
         <pathelement location="lib/hadoop-common-2.0.0-cdh4.4.0.jar"/>
@@ -49,5 +51,9 @@
     <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
         <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
         <antcall target="build"/>
+    </target>
+    <target name="jar" depends="build">
+        <mkdir dir="work"/>
+        <jar jarfile="${jar.name}" basedir="bin"></jar>
     </target>
 </project>
