@@ -3,6 +3,7 @@ package com.example.hadoop;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -30,7 +31,7 @@ public class MapReduceSampleCdh4 extends Configured implements Tool {
 
     @Override
     public Configuration getConf() {
-        return null;
+        return new Configuration(true);
     }
 
     @Override
@@ -39,10 +40,8 @@ public class MapReduceSampleCdh4 extends Configured implements Tool {
 
     @Override
     public int run(final String[] args) throws Exception {
-        Configuration conf = new Configuration(true);
-        String jobName = "SampleMapReduce";
         // get application specific args.
-        String[] appArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
+        String[] appArgs = new GenericOptionsParser(getConf(), args).getRemainingArgs();
         // check my application arguments.
         if (appArgs.length != 2) {
             System.err.println("Usage: HelloMapReduce <in> <out>");
@@ -53,15 +52,13 @@ public class MapReduceSampleCdh4 extends Configured implements Tool {
         Path outputPath = new Path(appArgs[1]);
 
         // Create a Job using the processed conf and set JobName with jobName.
-        Job job = new Job(conf, jobName);
+        String jobName = "SampleMapReduce";
+        Job job = Job.getInstance(getConf(), jobName);
+        job.setJarByClass(getClass());
 
         // Specify various job-specific parameters.
         FileInputFormat.addInputPath(job, inputPath);
         FileOutputFormat.setOutputPath(job, outputPath);
-        // SequenceFileOutputFormat.setOutputPath(job, outputPath);
-        // MultipleOutputs.addNamedOutput(job, "seq",
-        // SequenceFileOutputFormat.class, Text.class, Text.class);
-        job.setInputFormatClass(TextInputFormat.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setJarByClass(MapReduceSampleCdh4.class);
         job.setMapperClass(MapperSample.class);
@@ -71,7 +68,7 @@ public class MapReduceSampleCdh4 extends Configured implements Tool {
         // misc job configurations.
         job.setReducerClass(ReducerSample.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(Text.class);
+        job.setOutputValueClass(LongWritable.class);
 
         // Submit the job, then poll for progress until the job is complete
         // if do not care about the progress, job.waitForCompletion(false).

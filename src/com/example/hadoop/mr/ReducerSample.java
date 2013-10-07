@@ -1,7 +1,6 @@
 package com.example.hadoop.mr;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -17,10 +16,10 @@ public class ReducerSample extends Reducer<Text, Text, Text, LongWritable> {
     // a short description of ReducerTest
     // output K and drop V
     // <K, V> -> ReducerTest -> K
-    public void reduce(Text key, Iterator<Text> values, Context context) throws IOException, InterruptedException {
+    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         // キーごと割り振られたvalueを処理する
         long count = 0;
-        while (values.hasNext()) {
+        for (Text value : values) {
             // context.write(key, values.next());
             count++;
         }
